@@ -29,11 +29,13 @@ jobs:
         run: |
           mkdir -p dist
           for svc in auth-service product-service order-service; do
-            cd services/$svc
-            pip install -r ../../requirements.txt -t pkg -q
-            cp app.py pkg/
-            cd pkg && zip -r ../../dist/${svc}.zip . -q && cd ..
-            rm -rf pkg && cd ../..
+            mkdir -p pkg_temp
+            cp services/$svc/app.py pkg_temp/
+            pip install -r requirements.txt -t pkg_temp -q
+            cd pkg_temp
+            zip -r ../dist/${svc}.zip . -q
+            cd ..
+            rm -rf pkg_temp
             echo "Packaged $svc"
           done
       - uses: actions/upload-artifact@v4
@@ -136,17 +138,12 @@ jobs:
             -backend-config="key=prod/terraform.tfstate" \
             -backend-config="region=${{ env.AWS_REGION }}"
           terraform apply -auto-approve -var="environment=production"
-       - name: Package Lambda functions
-         run: |
-          mkdir -p dist
+      - name: Deploy Lambda code
+        run: |
           for svc in auth-service product-service order-service; do
-            mkdir -p dist
-            cd services/$svc
-            mkdir -p pkg
-            pip install -r ../../requirements.txt -t pkg -q
-            cp app.py pkg/
-            cd pkg
-            zip -r ../../../dist/${svc}.zip .
-            cd ../../..
-            echo "Packaged $svc"
+            aws lambda update-function-code \
+              --function-name shopsecure-prod-$svc \
+              --zip-file fileb://dist/$svc.zip
+            aws lambda wait function-updated \
+              --function-name shopsecure-prod-$svc
           done
