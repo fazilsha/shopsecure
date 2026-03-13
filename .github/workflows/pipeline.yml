@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   PYTHON_VERSION: "3.11"
   AWS_REGION: ap-south-1
