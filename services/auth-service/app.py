@@ -1,5 +1,5 @@
 import json, os, hashlib, hmac, base64, time
-
+#nothing
 JWT_SECRET = os.environ.get("JWT_SECRET", "dev-only-change-in-prod")
 USERS_DB   = {}   # In production: use AWS RDS
 
