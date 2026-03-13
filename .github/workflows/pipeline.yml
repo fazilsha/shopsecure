@@ -154,8 +154,8 @@ jobs:
         run: |
           for svc in auth-service product-service order-service; do
             aws lambda update-function-code \
-              --function-name shopsecure-prod-$svc \
+              --function-name shopsecure-production-$svc \
               --zip-file fileb://dist/$svc.zip
             aws lambda wait function-updated \
-              --function-name shopsecure-prod-$svc
+              --function-name shopsecure-production-$svc
           done
