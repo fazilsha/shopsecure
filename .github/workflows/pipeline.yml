@@ -136,12 +136,17 @@ jobs:
             -backend-config="key=prod/terraform.tfstate" \
             -backend-config="region=${{ env.AWS_REGION }}"
           terraform apply -auto-approve -var="environment=production"
-      - name: Deploy Lambda code
-        run: |
+       - name: Package Lambda functions
+         run: |
+          mkdir -p dist
           for svc in auth-service product-service order-service; do
-            aws lambda update-function-code \
-              --function-name shopsecure-prod-$svc \
-              --zip-file fileb://dist/$svc.zip
-            aws lambda wait function-updated \
-              --function-name shopsecure-prod-$svc
+            mkdir -p dist
+            cd services/$svc
+            mkdir -p pkg
+            pip install -r ../../requirements.txt -t pkg -q
+            cp app.py pkg/
+            cd pkg
+            zip -r ../../../dist/${svc}.zip .
+            cd ../../..
+            echo "Packaged $svc"
           done
