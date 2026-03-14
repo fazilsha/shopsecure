@@ -77,7 +77,7 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-	  GITLEAKS_ENABLE_COMMENTS: false
+          GITLEAKS_ENABLE_COMMENTS: "false"
         continue-on-error: true
       - uses: actions/upload-artifact@v4
         with:
