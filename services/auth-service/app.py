@@ -36,12 +36,17 @@ def resp(code, body):
         "statusCode": code,
         "headers": {
             "Content-Type": "application/json",
-            "X-Content-Type-Options": "nosniff"
+            "X-Content-Type-Options": "nosniff",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type,Authorization",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
         },
         "body": json.dumps(body)
     }
 
 def lambda_handler(event, context):
+    if event.get("httpMethod") == "OPTIONS":
+        return resp(200, {})
     method = event.get("httpMethod", "")
     path   = event.get("path", "")
     try:
