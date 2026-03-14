@@ -67,6 +67,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
+	  fetch-depth: 0
           python-version: ${{ env.PYTHON_VERSION }}
       - run: pip install bandit pip-audit checkov
       - run: bandit -r services/ -f json -o bandit.json || true
@@ -75,6 +76,7 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	  GITLEAKS_ENABLE_COMMENTS: false
         continue-on-error: true
       - uses: actions/upload-artifact@v4
         with:
