@@ -65,9 +65,10 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-	  fetch-depth: 0
           python-version: ${{ env.PYTHON_VERSION }}
       - run: pip install bandit pip-audit checkov
       - run: bandit -r services/ -f json -o bandit.json || true
